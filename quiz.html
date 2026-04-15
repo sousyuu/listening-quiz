@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>聴読解練習</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    background: #f0f2f8;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px 60px;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 44px 40px 40px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    text-align: center;
+    margin-bottom: 36px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---- Registration ---- */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  .field label span { color: #e53e3e; margin-left: 2px; }
+  .field input {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 15px;
+    border: 2px solid #e2e6f0;
+    border-radius: 12px;
+    outline: none;
+    color: #1a1a2e;
+    transition: border-color 0.2s;
+    background: #fff;
+  }
+  .field input::placeholder { color: #b0b8cc; }
+  .field input:focus { border-color: #6b6ef9; }
+
+  /* ---- Buttons ---- */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: #6b6ef9;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.06em;
+  }
+  .btn-primary:hover { background: #5558e8; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { background: #c4c6f8; cursor: not-allowed; }
+
+  /* ---- Section Announce ---- */
+  .section-announce { text-align: center; padding: 20px 0 10px; }
+  .section-badge {
+    display: inline-block;
+    background: #eeeffe;
+    color: #6b6ef9;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.08em;
+  }
+  .section-announce h2 {
+    font-size: 38px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+    letter-spacing: 0.06em;
+  }
+  .section-announce p {
+    font-size: 15px;
+    color: #7a8099;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+  .section-announce .section-icon { font-size: 52px; margin-bottom: 20px; }
+
+  /* ---- Question ---- */
+  .question-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+  .q-badge {
+    background: #6b6ef9;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+  }
+  .q-progress {
+    flex: 1;
+    font-size: 13px;
+    color: #9aa0b8;
+    text-align: right;
+  }
+
+  .question-image {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    border: 1px solid #eef0f8;
+  }
+
+  .options-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .option-item { display: flex; align-items: center; }
+  .option-item input[type="radio"] { display: none; }
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e6f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 14.5px;
+    color: #1a1a2e;
+    line-height: 1.55;
+  }
+  .option-label:hover { border-color: #6b6ef9; background: #f5f5ff; }
+  .option-item input[type="radio"]:checked + .option-label {
+    border-color: #6b6ef9;
+    background: #eeeffe;
+  }
+  .option-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    background: #e2e6f0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b6ef9;
+    transition: background 0.2s;
+  }
+  .option-item input[type="radio"]:checked + .option-label .option-number {
+    background: #6b6ef9;
+    color: #fff;
+  }
+
+  /* ---- Nav ---- */
+  .nav-row { display: flex; gap: 10px; }
+  .btn-secondary {
+    flex: 1;
+    padding: 14px;
+    background: #f0f2f8;
+    color: #6b6ef9;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover { background: #e2e6f4; }
+  .btn-next {
+    flex: 2;
+    padding: 14px;
+    background: #6b6ef9;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-next:hover { background: #5558e8; }
+  .btn-next:active { transform: scale(0.98); }
+  .btn-next:disabled { background: #c4c6f8; cursor: not-allowed; }
+
+  /* ---- Progress bar ---- */
+  .progress-bar-wrap {
+    background: #eef0f8;
+    border-radius: 8px;
+    height: 6px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6b6ef9, #9b8cf9);
+    border-radius: 8px;
+    transition: width 0.4s ease;
+  }
+
+  /* ---- Submitting ---- */
+  .submitting-page { text-align: center; padding: 40px 0; }
+  .spinner {
+    width: 52px;
+    height: 52px;
+    border: 5px solid #eeeffe;
+    border-top-color: #6b6ef9;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin: 0 auto 24px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .submitting-page h2 { font-size: 20px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+  .submitting-page p { font-size: 14px; color: #9aa0b8; }
+
+  /* ---- Complete ---- */
+  .complete-page { text-align: center; padding: 10px 0; }
+  .complete-page .check-icon { font-size: 56px; margin-bottom: 14px; }
+  .complete-page h2 { font-size: 24px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
+  .complete-page .subtitle { font-size: 14px; color: #7a8099; margin-bottom: 22px; }
+
+  .info-box {
+    background: #f5f7ff;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    text-align: left;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.9;
+  }
+  .info-box strong { color: #6b6ef9; }
+
+  /* Score card */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .score-card {
+    background: #f5f7ff;
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+  .score-card .sc-label { font-size: 11px; font-weight: 700; color: #9aa0b8; margin-bottom: 4px; letter-spacing: 0.06em; }
+  .score-card .sc-val { font-size: 22px; font-weight: 800; color: #6b6ef9; }
+  .score-card .sc-denom { font-size: 13px; color: #9aa0b8; }
+  .score-total {
+    background: linear-gradient(135deg, #6b6ef9, #9b8cf9);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 22px;
+    color: #fff;
+    text-align: center;
+  }
+  .score-total .st-label { font-size: 13px; font-weight: 600; opacity: 0.85; margin-bottom: 4px; }
+  .score-total .st-val { font-size: 36px; font-weight: 800; }
+  .score-total .st-denom { font-size: 18px; opacity: 0.8; }
+
+  /* Answer review */
+  .review-section { text-align: left; margin-bottom: 20px; }
+  .review-section .rv-title { font-size: 13px; font-weight: 700; color: #9aa0b8; margin-bottom: 8px; letter-spacing: 0.06em; }
+  .review-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .chip-correct { background: #e6f9ef; color: #27ae60; }
+  .chip-wrong   { background: #fdecea; color: #e53e3e; }
+  .chip-label   { font-size: 11px; color: #9aa0b8; align-self: center; margin-left: 2px; }
+
+  /* Error state */
+  .error-banner {
+    background: #fdecea;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    color: #c0392b;
+    line-height: 1.6;
+  }
+
+  .error-msg { color: #e53e3e; font-size: 13px; margin-top: 6px; display: none; }
+  .error-msg.show { display: block; }
+  .warn-msg { color: #dd6b20; font-size: 13px; margin-bottom: 12px; display: none; text-align: center; }
+  .warn-msg.show { display: block; }
+
+  @media (max-width: 480px) {
+    .card { padding: 32px 22px 28px; }
+    .page-title { font-size: 24px; }
+    .section-announce h2 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+<div class="card" id="app"></div>
+
+<script>
+// ===================== CONFIG =====================
+// GAS デプロイ後に発行される URL をここに貼り付けてください
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxwhbysmVDnJt8Ry9SXJ_K4IeVq5BiX998HGqBPyW8gGAjSEJjBZUsxKpkKw_C-5EboDw/exec";
+
+// ===================== 正解データ =====================
+const CORRECT_ANSWERS = [
+  [4, 3, 1, 2, 3],                         // セクション1
+  [3, 3, 1, 4, 2, 1, 4, 3, 3, 4],          // セクション2
+  [3, 1, 4, 3, 2, 4, 1, 3, 3, 3]           // セクション3
+];
+
+// ===================== 問題データ =====================
+const SECTIONS = [
+  {
+    label: "セクション1",
+    icon: "📖",
+    description: "問題を注意深く読んで、最も適切な答えを選んでください。",
+    questions: [
+      { image: "section1/1-1.png", options: ["創業記念パーティーの招待", "来客の予定の取り消し", "接待の予算", "顧客の苦情"] },
+      { image: "section1/1-2.png", options: ["販売戦略の提案", "パーティーの後片付け", "講演会の準備", "打ち合わせの結果報告"] },
+      { image: "section1/1-3.png", options: ["新規企画", "売り上げ状況", "人員削減", "工場稼働状況"] },
+      { image: "section1/1-4.png", options: ["新人へ仕事を引き継ぐこと", "新人が突然会社をやめたこと", "責任をとって会社をやめること", "仕事を全部投げ出すこと"] },
+      { image: "section1/1-5.png", options: ["部長を呼びに行く", "部屋に入る。", "名前を聞く。", "席を移る。"] }
+    ]
+  },
+  {
+    label: "セクション2",
+    icon: "🎧",
+    description: "問題を注意深く読んで、最も適切な答えを選んでください。",
+    questions: [
+      { image: "section2/2-1.png",  options: ["25社", "38社", "52社", "65社"] },
+      { image: "section2/2-2.png",  options: ["預貯金", "洋服", "旅行", "タブレット"] },
+      { image: "section2/2-3.png",  options: ["1", "2", "3", "4"] },
+      { image: "section2/2-4.png",  options: ["1", "2", "3", "4"] },
+      { image: "section2/2-5.png",  options: ["1", "2", "3", "4"] },
+      { image: "section2/2-6.png",  options: ["人事課長は3、研修担当者は2に座る", "人事課長は1、研修担当者は4に座る", "人事課長は4、研修担当者は1に座る", "人事課長は2、研修担当者は3に座る"] },
+      { image: "section2/2-7.png",  options: ["1", "2", "3", "4"] },
+      { image: "section2/2-8.png",  options: ["1", "2", "3", "4"] },
+      { image: "section2/2-9.png",  options: ["上司とすり合わせする。", "部長室に行く。", "営業からのデータを待つ。", "営業にデータを渡す。"] },
+      { image: "section2/2-10.png", options: ["ポスター、垂れ幕とも広報担当者と相談して決める。", "ポスターは広報担当者と相談して決め、垂れ幕はロビーに設置する。", "ポスターはロビーに掲示、垂れ幕は営業担当者と相談して決める。", "ポスターはロビーに掲示、垂れ幕は広報担当者と相談して決める。"] }
+    ]
+  },
+  {
+    label: "セクション3",
+    icon: "📝",
+    description: "問題を注意深く読んで、最も適切な答えを選んでください。",
+    questions: [
+      { image: "section3/3-1.png",  options: ["1", "2", "3", "4"] },
+      { image: "section3/3-2.png",  options: ["1", "2", "3", "4"] },
+      { image: "section3/3-3.png",  options: ["1", "2", "3", "4"] },
+      { image: "section3/3-4.png",  options: ["閉鎖", "新装開店", "移転", "合併"] },
+      { image: "section3/3-5.png",  options: ["1", "2", "3", "4"] },
+      { image: "section3/3-6.png",  options: ["1", "2", "3", "4"] },
+      { image: "section3/3-7.png",  options: ["1", "2", "3", "4"] },
+      { image: "section3/3-8.png",  options: ["売上金", "手数料", "懇親会費", "現金"] },
+      { image: "section3/3-9.png",  options: ["1,100,000円", "1,200,000円", "1,500,000円", "1,700,000円"] },
+      { image: "section3/3-10.png", options: ["1", "2", "3", "4"] }
+    ]
+  }
+];
+
+// ===================== STATE =====================
+const state = {
+  screen: "register",
+  studentId: "",
+  name: "",
+  sectionIdx: 0,
+  questionIdx: 0,
+  answers: [[], [], []],
+  scoreResult: null,
+  submitError: false
+};
+
+// ===================== SCORE CALC =====================
+function calcScores(answers) {
+  return SECTIONS.map((sec, si) => {
+    const correct = CORRECT_ANSWERS[si];
+    const submitted = answers[si] || [];
+    return correct.reduce((sum, ans, qi) => sum + (submitted[qi] === ans ? 1 : 0), 0);
+  });
+}
+
+// ===================== RENDER =====================
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  switch (state.screen) {
+    case "register":   renderRegister(app);   break;
+    case "announce":   renderAnnounce(app);   break;
+    case "question":   renderQuestion(app);   break;
+    case "submitting": renderSubmitting(app); break;
+    case "complete":   renderComplete(app);   break;
+  }
+}
+
+// ---- Register ----
+function renderRegister(app) {
+  app.innerHTML = `
+    <h1 class="page-title">聴読解練習</h1>
+    <div class="field">
+      <label>学号 <span>*</span></label>
+      <input type="text" id="inp-id" placeholder="学号を入力してください" value="${escHtml(state.studentId)}">
+      <div class="error-msg" id="err-id">学号を入力してください。</div>
+    </div>
+    <div class="field">
+      <label>姓名 <span>*</span></label>
+      <input type="text" id="inp-name" placeholder="姓名を入力してください" value="${escHtml(state.name)}">
+      <div class="error-msg" id="err-name">姓名を入力してください。</div>
+    </div>
+    <button class="btn-primary" id="btn-start">開始測驗</button>
+  `;
+
+  document.getElementById("btn-start").onclick = () => {
+    const id   = document.getElementById("inp-id").value.trim();
+    const name = document.getElementById("inp-name").value.trim();
+    let ok = true;
+    if (!id)   { document.getElementById("err-id").classList.add("show");   ok = false; }
+    else         document.getElementById("err-id").classList.remove("show");
+    if (!name) { document.getElementById("err-name").classList.add("show"); ok = false; }
+    else         document.getElementById("err-name").classList.remove("show");
+    if (!ok) return;
+    state.studentId = id;
+    state.name = name;
+    state.sectionIdx = 0;
+    state.answers = [[], [], []];
+    state.screen = "announce";
+    render();
+  };
+
+  ["inp-id","inp-name"].forEach(id => {
+    document.getElementById(id).addEventListener("input", e => {
+      const errId = id === "inp-id" ? "err-id" : "err-name";
+      if (e.target.value.trim()) document.getElementById(errId).classList.remove("show");
+    });
+  });
+}
+
+// ---- Announce ----
+function renderAnnounce(app) {
+  const sec = SECTIONS[state.sectionIdx];
+  app.innerHTML = `
+    <div class="section-announce">
+      <div class="section-badge">${sec.label}</div>
+      <div class="section-icon">${sec.icon}</div>
+      <h2>${sec.label}</h2>
+      <p>${sec.description}<br>全 <strong>${sec.questions.length}</strong> 問</p>
+      <button class="btn-primary" id="btn-go">はじめる →</button>
+    </div>
+  `;
+  document.getElementById("btn-go").onclick = () => {
+    state.questionIdx = 0;
+    state.screen = "question";
+    render();
+  };
+}
+
+// ---- Question ----
+function renderQuestion(app) {
+  const sec    = SECTIONS[state.sectionIdx];
+  const q      = sec.questions[state.questionIdx];
+  const totalQ = sec.questions.length;
+  const globalTotal = SECTIONS.reduce((s, s2) => s + s2.questions.length, 0);
+  const globalDone  = SECTIONS.slice(0, state.sectionIdx).reduce((s, s2) => s + s2.questions.length, 0) + state.questionIdx;
+  const pct    = Math.round((globalDone / globalTotal) * 100);
+  const saved  = state.answers[state.sectionIdx][state.questionIdx];
+  const isNumericOnly = q.options.every(o => /^[1-4]$/.test(o.trim()));
+  const isLastQ   = state.questionIdx === totalQ - 1;
+  const isLastSec = state.sectionIdx  === SECTIONS.length - 1;
+  const canGoBack = state.questionIdx > 0 || state.sectionIdx > 0;
+  const nextLabel = (isLastQ && isLastSec) ? "提出する ✓" : "次へ →";
+
+  const optionsHtml = q.options.map((opt, i) => {
+    const val = i + 1;
+    const checked = saved === val ? "checked" : "";
+    const display = isNumericOnly ? `選択肢 ${val}` : opt;
+    return `
+      <li class="option-item">
+        <input type="radio" name="q" id="opt${val}" value="${val}" ${checked}>
+        <label class="option-label" for="opt${val}">
+          <span class="option-number">${val}</span>
+          <span>${escHtml(display)}</span>
+        </label>
+      </li>`;
+  }).join("");
+
+  app.innerHTML = `
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="question-header">
+      <span class="q-badge">${sec.label} 第${state.questionIdx + 1}問</span>
+      <span class="q-progress">${state.questionIdx + 1} / ${totalQ}</span>
+    </div>
+    <img class="question-image" src="${q.image}" alt="問題${state.questionIdx + 1}" onerror="this.style.display='none'">
+    <ul class="options-list">${optionsHtml}</ul>
+    <div class="warn-msg" id="warn">回答を選択してください。</div>
+    <div class="nav-row">
+      ${canGoBack ? `<button class="btn-secondary" id="btn-back">← 戻る</button>` : ""}
+      <button class="btn-next" id="btn-next" style="${!canGoBack ? "flex:1" : ""}">${nextLabel}</button>
+    </div>
+  `;
+
+  if (canGoBack) {
+    document.getElementById("btn-back").onclick = () => {
+      if (state.questionIdx > 0) {
+        state.questionIdx--;
+      } else {
+        state.sectionIdx--;
+        state.questionIdx = SECTIONS[state.sectionIdx].questions.length - 1;
+      }
+      render();
+    };
+  }
+
+  document.getElementById("btn-next").onclick = () => {
+    const chosen = document.querySelector("input[name='q']:checked");
+    if (!chosen) { document.getElementById("warn").classList.add("show"); return; }
+    state.answers[state.sectionIdx][state.questionIdx] = parseInt(chosen.value);
+
+    if (isLastQ && isLastSec) {
+      submitAnswers();
+    } else if (isLastQ) {
+      state.sectionIdx++;
+      state.questionIdx = 0;
+      state.screen = "announce";
+      render();
+    } else {
+      state.questionIdx++;
+      render();
+    }
+  };
+
+  document.querySelectorAll("input[name='q']").forEach(r => {
+    r.addEventListener("change", () => document.getElementById("warn").classList.remove("show"));
+  });
+}
+
+// ---- Submit to GAS ----
+async function submitAnswers() {
+  state.screen = "submitting";
+  render();
+
+  const payload = {
+    studentId: state.studentId,
+    name: state.name,
+    answers: state.answers,
+    submittedAt: new Date().toISOString()
+  };
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      mode: "no-cors",   // GAS は CORS プリフライトを返さないため
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload)
+    });
+    // no-cors では response body を読めないが、エラーが出なければ送信成功とみなす
+    state.scoreResult = calcScores(state.answers);
+    state.submitError = false;
+  } catch (err) {
+    console.error(err);
+    state.scoreResult = calcScores(state.answers);
+    state.submitError = true;
+  }
+
+  state.screen = "complete";
+  render();
+}
+
+// ---- Submitting ----
+function renderSubmitting(app) {
+  app.innerHTML = `
+    <div class="submitting-page">
+      <div class="spinner"></div>
+      <h2>送信中...</h2>
+      <p>しばらくお待ちください</p>
+    </div>
+  `;
+}
+
+// ---- Complete ----
+function renderComplete(app) {
+  const scores = state.scoreResult || calcScores(state.answers);
+  const maxes  = [5, 10, 10];
+  const total  = scores.reduce((a, b) => a + b, 0);
+
+  const scoreGrid = SECTIONS.map((sec, si) => `
+    <div class="score-card">
+      <div class="sc-label">${sec.label}</div>
+      <div class="sc-val">${scores[si]}<span class="sc-denom">/${maxes[si]}</span></div>
+    </div>
+  `).join("");
+
+  const reviewSections = SECTIONS.map((sec, si) => {
+    const chips = sec.questions.map((_, qi) => {
+      const submitted = state.answers[si][qi];
+      const correct   = CORRECT_ANSWERS[si][qi];
+      const isOk = submitted === correct;
+      const cls  = isOk ? "chip chip-correct" : "chip chip-wrong";
+      return `<span class="${cls}" title="正解:${correct}">${submitted || "?"}</span>`;
+    }).join("");
+    return `
+      <div class="review-section">
+        <div class="rv-title">${sec.label}</div>
+        <div class="review-chips">${chips}</div>
+      </div>`;
+  }).join("");
+
+  const errorBanner = state.submitError ? `
+    <div class="error-banner">
+      ⚠️ Google Sheets への送信に失敗しました。<br>
+      ネットワーク接続またはGAS URLをご確認ください。<br>
+      スコアはこの画面でご確認いただけます。
+    </div>` : `
+    <div style="background:#e6f9ef;border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#27ae60;font-weight:600;">
+      ✅ Google Sheets への送信が完了しました
+    </div>`;
+
+  app.innerHTML = `
+    <div class="complete-page">
+      <div class="check-icon">🎉</div>
+      <h2>テスト完了！</h2>
+      <p class="subtitle">お疲れ様でした</p>
+
+      ${errorBanner}
+
+      <div class="info-box">
+        <strong>学号：</strong>${escHtml(state.studentId)}<br>
+        <strong>姓名：</strong>${escHtml(state.name)}
+      </div>
+
+      <div class="score-total">
+        <div class="st-label">合計得点</div>
+        <div class="st-val">${total}<span class="st-denom">/25</span></div>
+      </div>
+
+      <div class="score-grid">${scoreGrid}</div>
+
+      ${reviewSections}
+
+      <button class="btn-primary" onclick="resetAll()">最初からやり直す</button>
+    </div>
+  `;
+}
+
+// ===================== UTILS =====================
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function resetAll() {
+  state.screen = "register";
+  state.studentId = "";
+  state.name = "";
+  state.sectionIdx = 0;
+  state.questionIdx = 0;
+  state.answers = [[], [], []];
+  state.scoreResult = null;
+  state.submitError = false;
+  render();
+}
+
+// ===================== INIT =====================
+render();
+</script>
+</body>
+</html>
